@@ -10,7 +10,7 @@ import org.objectquery.UpdateQuery;
 
 import com.mongodb.DBCollection;
 
-public class MongoDBObjectQuery extends QueryEngine<DBCollection> {
+public class MongoDBQueryEngine extends QueryEngine<DBCollection> {
 
 	@Override
 	public <RET extends List<?>> RET execute(SelectQuery<?> query, DBCollection engineSession) {
