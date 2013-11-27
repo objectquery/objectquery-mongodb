@@ -14,26 +14,22 @@ public class MongoDBQueryEngine extends QueryEngine<DBCollection> {
 
 	@Override
 	public <RET extends List<?>> RET execute(SelectQuery<?> query, DBCollection engineSession) {
-		// TODO Auto-generated method stub
-		return null;
+		return MongoDBObjectQuery.execute(query, engineSession);
 	}
 
 	@Override
 	public int execute(DeleteQuery<?> dq, DBCollection engineSession) {
-		// TODO Auto-generated method stub
-		return 0;
+		return MongoDBObjectQuery.execute(dq, engineSession);
 	}
 
 	@Override
 	public boolean execute(InsertQuery<?> ip, DBCollection engineSession) {
-		// TODO Auto-generated method stub
-		return false;
+		return MongoDBObjectQuery.execute(ip, engineSession);
 	}
 
 	@Override
 	public int execute(UpdateQuery<?> query, DBCollection engineSession) {
-		// TODO Auto-generated method stub
-		return 0;
+		return MongoDBObjectQuery.execute(query, engineSession);
 	}
 
 }
