@@ -1,1 +1,2 @@
 org.objectquery.QueryEngine = org.objectquery.mongodb.MongoDBQueryEngine
+com.mongodb.DBCollection = org.objectquery.mongodb.MongoDBQueryEngine
