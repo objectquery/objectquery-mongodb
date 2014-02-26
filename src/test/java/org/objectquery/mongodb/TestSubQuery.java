@@ -82,7 +82,7 @@ public class TestSubQuery {
 		GenericSelectQuery<Person> query = new GenericSelectQuery<Person>(Person.class);
 		Person target = query.target();
 		SelectQuery<Person> subQuery = query.subQuery(Person.class);
-		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
+//		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
 		query.prj(subQuery);
 
 		Assert.assertEquals(

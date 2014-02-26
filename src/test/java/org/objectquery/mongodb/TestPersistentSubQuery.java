@@ -66,8 +66,8 @@ public class TestPersistentSubQuery {
 		SelectQuery<Dog> doubSubQuery = subQuery.subQuery(Dog.class);
 		subQuery.eq(subQuery.target().getDog(), doubSubQuery);
 
-		doubSubQuery.notEq(doubSubQuery.target().getOwner(), subQuery.target());
-		doubSubQuery.notEq(doubSubQuery.target().getOwner(), query.target().getMom());
+//		doubSubQuery.notEq(doubSubQuery.target().getOwner(), subQuery.target());
+//		doubSubQuery.notEq(doubSubQuery.target().getOwner(), query.target().getMom());
 
 //		List<Person> res = JPAObjectQuery.buildQuery(query, collection).getResultList();
 //		Assert.assertEquals(1, res.size());
@@ -101,7 +101,7 @@ public class TestPersistentSubQuery {
 		GenericSelectQuery<Person> query = new GenericSelectQuery<Person>(Person.class);
 		Person target = query.target();
 		SelectQuery<Person> subQuery = query.subQuery(Person.class);
-		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
+//		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
 		query.prj(subQuery);
 
 //		List<Person> res = JPAObjectQuery.buildQuery(query, collection).getResultList();
@@ -117,7 +117,7 @@ public class TestPersistentSubQuery {
 		GenericSelectQuery<Person> query = new GenericSelectQuery<Person>(Person.class);
 		Person target = query.target();
 		SelectQuery<Person> subQuery = query.subQuery(Person.class);
-		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
+//		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
 		query.order(subQuery);
 
 //		JPAObjectQuery.buildQuery(query, collection).getResultList();
@@ -129,7 +129,7 @@ public class TestPersistentSubQuery {
 		GenericSelectQuery<Person> query = new GenericSelectQuery<Person>(Person.class);
 		Person target = query.target();
 		SelectQuery<Person> subQuery = query.subQuery(Person.class);
-		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
+//		subQuery.eq(subQuery.target().getDog().getOwner(), target.getDud());
 		query.having(subQuery, ProjectionType.COUNT).eq(3D);
 
 //		JPAObjectQuery.buildQuery(query, collection).getResultList();

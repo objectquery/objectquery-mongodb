@@ -5,6 +5,7 @@ import java.util.List;
 public class Person {
 	private Long id;
 	private String name;
+	private String surname;
 	private List<Person> friends;
 	private Person mom;
 	private Person dud;
@@ -25,6 +26,14 @@ public class Person {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
 	public List<Person> getFriends() {

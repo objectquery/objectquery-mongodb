@@ -5,7 +5,7 @@ public class Dog {
 
 	private Long id;
 	private String name;
-	private Person owner;
+//	private Person owner;
 	private Home home;
 
 	public Long getId() {
@@ -24,13 +24,13 @@ public class Dog {
 		this.name = name;
 	}
 
-	public Person getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Person owner) {
-		this.owner = owner;
-	}
+//	public Person getOwner() {
+//		return owner;
+//	}
+//
+//	public void setOwner(Person owner) {
+//		this.owner = owner;
+//	}
 
 	public Home getHome() {
 		return home;

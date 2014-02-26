@@ -7,44 +7,41 @@ import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Home.HomeType;
 import org.objectquery.mongodb.domain.Person;
 
+import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.util.JSON;
 
 public class PersistentTestHelper {
 
 	private static DB db;
 
 	private static void initData() {
-		DBCollection entityManager;
-		entityManager = db.getCollection("test");
+		DBCollection collection;
+		collection = db.getCollection("test");
+		Gson gson = new Gson();
 
 		Home tomHome = new Home();
 		tomHome.setAddress("homeless");
 		tomHome.setType(HomeType.HOUSE);
-		
-//		/tomHome = entityManager.merge(tomHome);
 
 		Person tom = new Person();
 		tom.setName("tom");
 		tom.setHome(tomHome);
-		//tom = entityManager.merge(tom);
 
 		Home dudHome = new Home();
 		dudHome.setAddress("moon");
 		dudHome.setType(HomeType.HOUSE);
-		//dudHome = entityManager.merge(dudHome);
 
 		Person tomDud = new Person();
 		tomDud.setName("tomdud");
 		tomDud.setHome(dudHome);
-		//tomDud = entityManager.merge(tomDud);
 
 		Person tomMum = new Person();
 		tomMum.setName("tommum");
 		tomMum.setHome(dudHome);
-
-		//tomMum = entityManager.merge(tomMum);
 
 		Home dogHome = new Home();
 		dogHome.setAddress("royal palace");
@@ -52,22 +49,19 @@ public class PersistentTestHelper {
 		dogHome.setPrice(1000000);
 		dogHome.setWeight(30);
 
-		//dogHome = entityManager.merge(dogHome);
-
 		Dog tomDog = new Dog();
 		tomDog.setName("cerberus");
-		tomDog.setOwner(tom);
+//		tomDog.setOwner(tom);
 		tomDog.setHome(dogHome);
-		//tomDog = entityManager.merge(tomDog);
 
 		tom.setDud(tomDud);
 		tom.setMum(tomMum);
 		tom.setDog(tomDog);
 		tomDud.setDog(tomDog);
-		//entityManager.persist(tomDud);
-		//entityManager.persist(tom);
-		//entityManager.getTransaction().commit();
-		//entityManager.close();
+
+		System.out.println(gson.toJson(tom));
+		DBObject tomObj = (DBObject) JSON.parse(gson.toJson(tom));
+		collection.save(tomObj);
 
 	}
 
