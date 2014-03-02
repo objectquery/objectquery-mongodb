@@ -24,17 +24,17 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
 
-		Assert.assertEquals("{ \"name\" : \"tom\"}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		Assert.assertEquals("{ \"$and\" : [ { \"name\" : \"tom\"}]}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
-	@Test(expected = ObjectQueryException.class)
+	@Test
 	public void testDupliedPath() {
 
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
 		qp.eq(target.getName(), "tom2");
-		MongoDBObjectQuery.mongoDBBuilder(qp);
+		Assert.assertEquals("{ \"$and\" : [ { \"name\" : \"tom\"} , { \"name\" : \"tom2\"}]}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getDog().getName(), "tom");
 		qp.eq(target.getDud().getName(), "tom3");
-		Assert.assertEquals("{ \"dog\" : { \"name\" : \"tom\"} , \"dud\" : { \"name\" : \"tom3\"}}",
+		Assert.assertEquals("{ \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}} , { \"dud\" : { \"name\" : \"tom3\"}}]}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 
 	}
@@ -163,14 +163,13 @@ public class TestSimpleQuery {
 		qp.ltEq(target.getName(), "tom");
 		qp.notEq(target.getName(), "tom");
 
-		// Assert.assertEquals(
-		// "select A from org.objectquery.jpa.domain.Person A where A.name  =  :A_name AND A.name  like  :A_name1 AND A.name not like :A_name2 AND A.name  >  :A_name3 AND A.name  <  :A_name4 AND A.name  >=  :A_name5 AND A.name  <=  :A_name6 AND A.name  <>  :A_name7 AND UPPER(A.name) like UPPER(:A_name8) AND UPPER(A.name) not like UPPER(:A_name9)",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		
-		Assert.assertEquals("{ \"name\" : \"tom\" }", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		Assert.assertEquals(
+				"{ \"$and\" : [ { \"name\" : \"tom\"} , { \"name\" : { \"$gt\" : \"tom\"}} , { \"name\" : { \"$lt\" : \"tom\"}} , { \"name\" : { \"$gte\" : \"tom\"}}"
+						+ " , { \"name\" : { \"$lte\" : \"tom\"}} , { \"name\" : { \"$ne\" : \"tom\"}}]}",
+				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testLikeConditions() {
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
@@ -178,7 +177,7 @@ public class TestSimpleQuery {
 		qp.notLike(target.getName(), "tom");
 		qp.likeNc(target.getName(), "tom");
 		qp.notLikeNc(target.getName(), "tom");
-		Assert.assertEquals("{ \"name\" : \"tom\"}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		MongoDBObjectQuery.mongoDBBuilder(qp).getQuery();
 	}
 
 	@Test
@@ -187,16 +186,14 @@ public class TestSimpleQuery {
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
 		List<String> pars = new ArrayList<String>();
+		pars.add("tom");
 		qp.in(target.getName(), pars);
 		qp.notIn(target.getName(), pars);
-
-		// Assert.assertEquals("select A from org.objectquery.jpa.domain.Person A where A.name  in  (:A_name) AND A.name  not in  (:A_name1)",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
-
+		Assert.assertEquals("{ \"$and\" : [ { \"name\" : { \"$in\" : [ \"tom\"]}} , { \"name\" : { \"$nin\" : [ \"tom\"]}}]}",
+				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testContainsCondition() {
 
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
@@ -205,11 +202,7 @@ public class TestSimpleQuery {
 		qp.contains(target.getFriends(), p);
 		qp.notContains(target.getFriends(), p);
 
-		// Assert.assertEquals(
-		// "select A from org.objectquery.jpa.domain.Person A where :A_friends  member of  A.friends AND :A_friends1  not member of  A.friends",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
-
+		JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery());
 	}
 
 	@Test
@@ -243,16 +236,12 @@ public class TestSimpleQuery {
 
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testBetweenCondition() {
 		SelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
 		Home target = qp.target();
 		qp.between(qp.box(target.getPrice()), 20D, 30D);
 
-		// Assert.assertEquals("select A from org.objectquery.jpa.domain.Home A where A.price  BETWEEN  :A_price AND :A_price1 ",
-		// JPAObjectQuery
-		// .jpqlGenerator(qp).getQuery());
-		Assert.fail();
-
+		MongoDBObjectQuery.mongoDBBuilder(qp).getQuery();
 	}
 }

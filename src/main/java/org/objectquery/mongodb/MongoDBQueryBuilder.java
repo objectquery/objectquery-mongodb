@@ -1,5 +1,6 @@
 package org.objectquery.mongodb;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.objectquery.generic.ConditionElement;
@@ -65,53 +66,32 @@ public class MongoDBQueryBuilder {
 		query = buildConditionGroup(builder);
 	}
 
-	private DBObject buildConditionGroup(ConditionGroup builder) {
-		BasicDBObject object = new BasicDBObject();
-		for (ConditionElement element : builder.getConditions()) {
+	private DBObject buildConditionGroup(ConditionGroup group) {
+		List<DBObject> list = new ArrayList<DBObject>();
+		for (ConditionElement element : group.getConditions()) {
 			if (element instanceof ConditionGroup) {
-				ConditionGroup group = (ConditionGroup) element;
-				object.append(getGroupOperator(group.getType()), buildConditionGroup(group));
+				list.add(buildConditionGroup((ConditionGroup) element));
 			} else if (element instanceof ConditionItem) {
 				ConditionItem item = (ConditionItem) element;
-				DBObject cur = getParent(object, item.getItem().getParent());
-				if (ConditionType.EQUALS == item.getType()) {
-					if (cur.put(item.getItem().getName(), item.getValue()) != null) {
-						throw new ObjectQueryException("mutiple property in the same path are not supported by mongodb implementation");
-					}
-				} else {
-					String operator = getOperator(item.getType());
-					if (cur.put(item.getItem().getName(), new BasicDBObject(operator, item.getValue())) != null) {
-						throw new ObjectQueryException("mutiple property in the same path are not supported by mongodb implementation");
-					}
-
-				}
-				// object.append();
+				list.add(getParent(item.getItem(), item));
 			}
 		}
-
-		return object;
-
+		return new BasicDBObject(getGroupOperator(group.getType()), list);
 	}
 
-	private DBObject getParent(DBObject dbObject, PathItem item) {
-		if (item.getParent() == null) {
-			return dbObject;
+	private DBObject getParent(PathItem item, ConditionItem conditionItem) {
+		BasicDBObject cur = null;
+		while (item.getParent() != null) {
+			if (cur == null) {
+				if (ConditionType.EQUALS == conditionItem.getType())
+					cur = new BasicDBObject(item.getName(), conditionItem.getValue());
+				else
+					cur = new BasicDBObject(item.getName(), new BasicDBObject(getOperator(conditionItem.getType()), conditionItem.getValue()));
+			} else
+				cur = new BasicDBObject(item.getName(), cur);
+			item = item.getParent();
 		}
-		DBObject cur;
-		if (item.getParent().getParent() == null)
-			cur = dbObject;
-		else
-			cur = getParent(dbObject, item.getParent());
-		Object get = cur.get(item.getName());
-		if (get != null) {
-			if (!(get instanceof DBObject))
-				throw new ObjectQueryException("mutiple property in the same path are not supported by mongodb implementation");
-			return (DBObject) get;
-		} else {
-			DBObject newO = new BasicDBObject();
-			cur.put(item.getName(), newO);
-			return newO;
-		}
+		return cur;
 	}
 
 	private String getOperator(ConditionType type) {
@@ -130,14 +110,14 @@ public class MongoDBQueryBuilder {
 			return "$nin";
 		case NOT_EQUALS:
 			return "$ne";
-			
+
 		case BETWEEN:
 		case LIKE:
 		case LIKE_NOCASE:
 		case NOT_CONTAINS:
 		case CONTAINS:
 		case NOT_LIKE_NOCASE:
-			break;
+			throw new ObjectQueryException("Operator " + type.name() + " not supported by mongodb");
 		default:
 			break;
 		}
@@ -146,7 +126,14 @@ public class MongoDBQueryBuilder {
 	}
 
 	private String getGroupOperator(GroupType type) {
-		// TODO Auto-generated method stub
+		switch (type) {
+		case AND:
+			return "$and";
+		case OR:
+			return "or";
+		default:
+			break;
+		}
 		return null;
 	}
 
