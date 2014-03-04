@@ -13,6 +13,8 @@ import org.objectquery.generic.GenericSelectQuery;
 import org.objectquery.generic.GroupType;
 import org.objectquery.generic.Join;
 import org.objectquery.generic.ObjectQueryException;
+import org.objectquery.generic.Order;
+import org.objectquery.generic.OrderType;
 import org.objectquery.generic.PathItem;
 
 import com.mongodb.BasicDBObject;
@@ -63,7 +65,36 @@ public class MongoDBQueryBuilder {
 			throw new ObjectQueryException("Mongodb Implementation doesn't support join");
 		if (!builder.getHavings().isEmpty())
 			throw new ObjectQueryException("Mongodb Implementation doesn't support having operator");
-		query = buildConditionGroup(builder);
+
+		query = new BasicDBObject();
+		if (!builder.getConditions().isEmpty())
+			query.put("$query", buildConditionGroup(builder));
+		if (!builder.getOrders().isEmpty())
+			query.put("$orderby", buildOrder(builder.getOrders()));
+	}
+
+	private DBObject buildOrder(List<Order> orders) {
+		DBObject obj = new BasicDBObject();
+		for (Order order : orders) {
+			PathItem item = ((PathItem) order.getItem());
+			getOrderParent(item.getParent(), obj).put(item.getName(), order.getType() != OrderType.DESC ? new Integer(1) : new Integer(-1));
+		}
+		return obj;
+	}
+
+	private DBObject getOrderParent(PathItem item, DBObject obj) {
+		if (item.getParent() != null) {
+			DBObject parent = getOrderParent(item.getParent(), obj);
+			DBObject prop = (DBObject) parent.get(item.getName());
+			if (prop == null) {
+				prop = new BasicDBObject();
+				parent.put(item.getName(), prop);
+			}
+			return prop;
+		} else {
+			return obj;
+		}
+
 	}
 
 	private DBObject buildConditionGroup(ConditionGroup group) {

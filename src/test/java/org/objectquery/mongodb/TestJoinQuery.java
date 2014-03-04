@@ -43,6 +43,7 @@ public class TestJoinQuery {
 
 //		Assert.assertEquals("select A from org.objectquery.jpa.domain.Person A LEFT JOIN A.mom AB0 where AB0.name  =  :AB0_name", JPAObjectQuery
 //				.jpqlGenerator(query).getQuery());
+		Assert.fail();
 	}
 
 }
