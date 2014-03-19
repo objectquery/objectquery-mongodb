@@ -58,10 +58,9 @@ public class TestSimpleQuery {
 		qp.prj(target.getName());
 		qp.eq(target.getDog().getName(), "tom");
 
-		// Assert.assertEquals("select A.name from org.objectquery.jpa.domain.Person A where A.dog.name  =  :A_dog_name",
-		// JPAObjectQuery
-		// .jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}}]}}",
+				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		Assert.assertEquals("{ \"name\" : 1}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getProjections()));
 
 	}
 

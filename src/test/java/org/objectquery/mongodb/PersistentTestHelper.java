@@ -2,6 +2,8 @@ package org.objectquery.mongodb;
 
 import java.net.UnknownHostException;
 
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
 import org.objectquery.mongodb.domain.Dog;
 import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Home.HomeType;
@@ -11,16 +13,19 @@ import com.google.gson.Gson;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 public class PersistentTestHelper {
 
 	private static DB db;
+//	private static DB mr;
 
 	private static void initData() {
 		DBCollection collection;
 		collection = db.getCollection("test");
+
 		Gson gson = new Gson();
 
 		Home tomHome = new Home();
@@ -68,7 +73,11 @@ public class PersistentTestHelper {
 	public static DBCollection getDb() {
 		if (db == null) {
 			try {
+
 				final MongoClient client = new MongoClient("localhost");
+				Morphia morphia = new Morphia();
+				morphia.map(Person.class,Home.class,Dog.class);
+				Datastore ds = morphia.createDatastore(client, "testDb");
 				db = client.getDB("testDb");
 				initData();
 				Runtime.getRuntime().addShutdownHook(new Thread() {

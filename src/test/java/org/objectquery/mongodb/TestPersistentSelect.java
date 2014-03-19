@@ -32,7 +32,7 @@ public class TestPersistentSelect {
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
 
-//		List<Person> res = JPAObjectQuery.buildQuery(qp, collection).getResultList();
+		List<Person> res = MongoDBObjectQuery.execute(qp, collection);
 
 //		Assert.assertEquals(1, res.size());
 //		Assert.assertEquals(res.get(0).getName(), "tom");

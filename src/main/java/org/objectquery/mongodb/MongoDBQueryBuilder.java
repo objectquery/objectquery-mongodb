@@ -3,6 +3,7 @@ package org.objectquery.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.objectquery.SelectQuery;
 import org.objectquery.generic.ConditionElement;
 import org.objectquery.generic.ConditionGroup;
 import org.objectquery.generic.ConditionItem;
@@ -16,6 +17,7 @@ import org.objectquery.generic.ObjectQueryException;
 import org.objectquery.generic.Order;
 import org.objectquery.generic.OrderType;
 import org.objectquery.generic.PathItem;
+import org.objectquery.generic.Projection;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -23,6 +25,7 @@ import com.mongodb.DBObject;
 public class MongoDBQueryBuilder {
 
 	private DBObject query;
+	private DBObject projections;
 
 	public MongoDBQueryBuilder(GenericBaseQuery<?> query) {
 		GenericInternalQueryBuilder builder = (GenericInternalQueryBuilder) query.getBuilder();
@@ -67,24 +70,40 @@ public class MongoDBQueryBuilder {
 			throw new ObjectQueryException("Mongodb Implementation doesn't support having operator");
 
 		query = new BasicDBObject();
+		if (!builder.getProjections().isEmpty()) {
+			projections = buildProjection(builder.getProjections());
+		}
+
 		if (!builder.getConditions().isEmpty())
 			query.put("$query", buildConditionGroup(builder));
 		if (!builder.getOrders().isEmpty())
 			query.put("$orderby", buildOrder(builder.getOrders()));
 	}
 
-	private DBObject buildOrder(List<Order> orders) {
+	private DBObject buildProjection(List<Projection> projectionsList) {
 		DBObject obj = new BasicDBObject();
-		for (Order order : orders) {
-			PathItem item = ((PathItem) order.getItem());
-			getOrderParent(item.getParent(), obj).put(item.getName(), order.getType() != OrderType.DESC ? new Integer(1) : new Integer(-1));
+		for (Projection projection : projectionsList) {
+			if (projection.getItem() instanceof PathItem) {
+				PathItem item = ((PathItem) projection.getItem());
+				getParent(item.getParent(), obj).put(item.getName(), new Integer(1));
+			} else
+				throw new ObjectQueryException("mongodb query generator doesn't support subquery");
 		}
 		return obj;
 	}
 
-	private DBObject getOrderParent(PathItem item, DBObject obj) {
+	private DBObject buildOrder(List<Order> orders) {
+		DBObject obj = new BasicDBObject();
+		for (Order order : orders) {
+			PathItem item = ((PathItem) order.getItem());
+			getParent(item.getParent(), obj).put(item.getName(), order.getType() != OrderType.DESC ? new Integer(1) : new Integer(-1));
+		}
+		return obj;
+	}
+
+	private DBObject getParent(PathItem item, DBObject obj) {
 		if (item.getParent() != null) {
-			DBObject parent = getOrderParent(item.getParent(), obj);
+			DBObject parent = getParent(item.getParent(), obj);
 			DBObject prop = (DBObject) parent.get(item.getName());
 			if (prop == null) {
 				prop = new BasicDBObject();
@@ -104,16 +123,21 @@ public class MongoDBQueryBuilder {
 				list.add(buildConditionGroup((ConditionGroup) element));
 			} else if (element instanceof ConditionItem) {
 				ConditionItem item = (ConditionItem) element;
-				list.add(getParent(item.getItem(), item));
+				list.add(getConditionParent(item));
 			}
 		}
 		return new BasicDBObject(getGroupOperator(group.getType()), list);
 	}
 
-	private DBObject getParent(PathItem item, ConditionItem conditionItem) {
+	private DBObject getConditionParent(ConditionItem conditionItem) {
 		BasicDBObject cur = null;
+		PathItem item = conditionItem.getItem();
 		while (item.getParent() != null) {
 			if (cur == null) {
+				if (conditionItem.getValue() instanceof PathItem)
+					throw new ObjectQueryException("mongodb implemantation doesn't support fields as condition value");
+				if (conditionItem.getValue() instanceof SelectQuery<?>)
+					throw new ObjectQueryException("mongodb implemantation doesn't support subquery");
 				if (ConditionType.EQUALS == conditionItem.getType())
 					cur = new BasicDBObject(item.getName(), conditionItem.getValue());
 				else
@@ -152,7 +176,6 @@ public class MongoDBQueryBuilder {
 		default:
 			break;
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -170,6 +193,10 @@ public class MongoDBQueryBuilder {
 
 	public DBObject getQuery() {
 		return query;
+	}
+
+	public DBObject getProjections() {
+		return projections;
 	}
 
 	public DBObject getData() {
