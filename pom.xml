@@ -1,9 +1,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
+	
 	<groupId>org.objectquery</groupId>
 	<artifactId>objectquery-mongodb</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>objectquery-mongodb</name>
+	<url>http://www.objectquery.org</url>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.5</maven.compiler.source>
+		<maven.compiler.target>1.5</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.objectquery</groupId>
@@ -41,13 +67,33 @@
 			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.4</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
+	<scm>
+		<url>git@github.com:objectquery/objectquery-mongodb.git</url>
+		<connection>scm:git:git@github.com:objectquery/objectquery-mongodb.git</connection>
+		<developerConnection>scm:git:git@github.com:objectquery/objectquery-mongodb.git</developerConnection>
+	</scm>
+	<organization>
+		<name>Object Query</name>
+		<url>http://www.objectquery.org</url>
+	</organization>
+
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/objectquery/objectquery-mongodb/issues</url>
+	</issueManagement>
+	<mailingLists>
+		<mailingList>
+			<name>Support</name>
+			<post>list@objectquery.org</post>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<name>tglman</name>
+		</developer>
+	</developers>
+
 	<build>
 		<plugins>
 			<plugin>
