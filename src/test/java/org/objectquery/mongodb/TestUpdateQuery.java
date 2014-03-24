@@ -6,6 +6,7 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mongodb.morphia.Datastore;
 import org.objectquery.UpdateQuery;
 import org.objectquery.generic.GenericUpdateQuery;
 import org.objectquery.generic.ObjectQueryException;
@@ -13,11 +14,9 @@ import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Other;
 import org.objectquery.mongodb.domain.Person;
 
-import com.mongodb.DBCollection;
-
 public class TestUpdateQuery {
 
-	private DBCollection collection;
+	private Datastore collection;
 
 	@Before
 	public void beforeTest() {

@@ -6,21 +6,20 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mongodb.morphia.Datastore;
 import org.objectquery.InsertQuery;
 import org.objectquery.generic.GenericInsertQuery;
 import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Other;
 import org.objectquery.mongodb.domain.Person;
 
-import com.mongodb.DBCollection;
-
 public class TestInsertQuery {
 
-	private DBCollection collection;
+	private Datastore datastore;
 
 	@Before
 	public void beforeTest() {
-		collection = PersistentTestHelper.getDb();
+		datastore = PersistentTestHelper.getDb();
 	}
 
 	@Test
@@ -80,7 +79,7 @@ public class TestInsertQuery {
 	}
 	@After
 	public void afterTest() {
-		collection = null;
+		datastore = null;
 	}
 
 }

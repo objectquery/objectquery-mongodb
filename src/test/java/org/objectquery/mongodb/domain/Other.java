@@ -1,9 +1,12 @@
 package org.objectquery.mongodb.domain;
 
+import org.mongodb.morphia.annotations.Id;
+
 
 public class Other {
 
-	private long id;
+	@Id
+	private String id;
 	private String text;
 	private double price;
 
@@ -15,11 +18,11 @@ public class Other {
 		this.text = text;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

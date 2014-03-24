@@ -5,17 +5,16 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mongodb.morphia.Datastore;
 import org.objectquery.SelectQuery;
 import org.objectquery.generic.GenericSelectQuery;
 import org.objectquery.generic.JoinType;
 import org.objectquery.generic.ObjectQueryException;
 import org.objectquery.mongodb.domain.Person;
 
-import com.mongodb.DBCollection;
-
 public class TestPersistentJoin {
 
-	private DBCollection collection;
+	private Datastore collection;
 
 	@Before
 	public void beforeTest() {

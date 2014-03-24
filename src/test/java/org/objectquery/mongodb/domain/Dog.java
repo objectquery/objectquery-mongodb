@@ -1,18 +1,21 @@
 package org.objectquery.mongodb.domain;
 
+import org.mongodb.morphia.annotations.Id;
+
 
 public class Dog {
 
-	private Long id;
+	@Id
+	private String id;
 	private String name;
 //	private Person owner;
 	private Home home;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

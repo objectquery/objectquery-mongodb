@@ -58,8 +58,9 @@ public class MongoDBQueryBuilder {
 	}
 
 	private void buildDelete(Class<?> targetClass, GenericInternalQueryBuilder builder) {
-		// TODO Auto-generated method stub
-
+		query = new BasicDBObject();
+		if (!builder.getConditions().isEmpty())
+			query.put("$query", buildConditionGroup(builder));
 	}
 
 	private void buildSelect(Class<?> targetClass, GenericInternalQueryBuilder builder, List<Join> joins, String name) {
@@ -184,7 +185,7 @@ public class MongoDBQueryBuilder {
 		case AND:
 			return "$and";
 		case OR:
-			return "or";
+			return "$or";
 		default:
 			break;
 		}

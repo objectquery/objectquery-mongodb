@@ -2,8 +2,11 @@ package org.objectquery.mongodb.domain;
 
 import java.util.List;
 
+import org.mongodb.morphia.annotations.Id;
+
 public class Person {
-	private Long id;
+	@Id
+	private String id;
 	private String name;
 	private String surname;
 	private List<Person> friends;
@@ -12,11 +15,11 @@ public class Person {
 	private Home home;
 	private Dog dog;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

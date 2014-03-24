@@ -9,24 +9,13 @@ import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Home.HomeType;
 import org.objectquery.mongodb.domain.Person;
 
-import com.google.gson.Gson;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import com.mongodb.util.JSON;
 
 public class PersistentTestHelper {
 
-	private static DB db;
-//	private static DB mr;
+	private static Datastore ds;
 
 	private static void initData() {
-		DBCollection collection;
-		collection = db.getCollection("test");
-
-		Gson gson = new Gson();
 
 		Home tomHome = new Home();
 		tomHome.setAddress("homeless");
@@ -56,7 +45,7 @@ public class PersistentTestHelper {
 
 		Dog tomDog = new Dog();
 		tomDog.setName("cerberus");
-//		tomDog.setOwner(tom);
+		// tomDog.setOwner(tom);
 		tomDog.setHome(dogHome);
 
 		tom.setDud(tomDud);
@@ -64,25 +53,25 @@ public class PersistentTestHelper {
 		tom.setDog(tomDog);
 		tomDud.setDog(tomDog);
 
-		System.out.println(gson.toJson(tom));
-		DBObject tomObj = (DBObject) JSON.parse(gson.toJson(tom));
-		collection.save(tomObj);
+		ds.save(tom);
 
 	}
 
-	public static DBCollection getDb() {
-		if (db == null) {
+	public static Datastore getDb() {
+		if (ds == null) {
 			try {
 
 				final MongoClient client = new MongoClient("localhost");
 				Morphia morphia = new Morphia();
-				morphia.map(Person.class,Home.class,Dog.class);
-				Datastore ds = morphia.createDatastore(client, "testDb");
-				db = client.getDB("testDb");
+				morphia.map(Person.class, Home.class, Dog.class);
+				ds = morphia.createDatastore(client, "testDb");
 				initData();
 				Runtime.getRuntime().addShutdownHook(new Thread() {
 					@Override
 					public void run() {
+						ds.getCollection(Person.class).drop();
+						ds.getCollection(Home.class).drop();
+						ds.getCollection(Dog.class).drop();
 						client.close();
 					}
 				});
@@ -90,7 +79,7 @@ public class PersistentTestHelper {
 				throw new RuntimeException(e);
 			}
 		}
-		return db.getCollection("test");
+		return ds;
 	}
 
 }

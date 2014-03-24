@@ -1,22 +1,25 @@
 package org.objectquery.mongodb.domain;
 
+import org.mongodb.morphia.annotations.Id;
+
 
 public class Home {
 	public enum HomeType {
 		KENNEL, HOUSE
 	};
 
-	private Long id;
+	@Id
+	private String id;
 	private String address;
 	private HomeType type;
 	private int weight;
 	private double price;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
