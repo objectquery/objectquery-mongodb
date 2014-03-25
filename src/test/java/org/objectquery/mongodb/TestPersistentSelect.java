@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.objectquery.SelectQuery;
 import org.objectquery.generic.GenericSelectQuery;
+import org.objectquery.generic.ObjectQueryException;
 import org.objectquery.generic.OrderType;
 import org.objectquery.generic.ProjectionType;
 import org.objectquery.mongodb.domain.Home;
@@ -42,7 +43,7 @@ public class TestPersistentSelect {
 		Assert.assertEquals(3, res.size());
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectPathValue() {
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
@@ -117,13 +118,23 @@ public class TestPersistentSelect {
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
-		qp.like(target.getName(), "tom");
-		qp.notLike(target.getName(), "tom");
 		qp.gt(target.getName(), "tom");
 		qp.lt(target.getName(), "tom");
 		qp.gtEq(target.getName(), "tom");
 		qp.ltEq(target.getName(), "tom");
 		qp.notEq(target.getName(), "tom");
+		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
+		Assert.assertEquals(0, res.size());
+
+	}
+
+	@Test(expected = ObjectQueryException.class)
+	public void testSelectLikeConditions() {
+
+		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
+		Person target = qp.target();
+		qp.like(target.getName(), "tom");
+		qp.notLike(target.getName(), "tom");
 		qp.likeNc(target.getName(), "tom");
 		qp.notLikeNc(target.getName(), "tom");
 		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
@@ -146,18 +157,16 @@ public class TestPersistentSelect {
 		Assert.assertEquals(0, res.size());
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectContainsCondition() {
 
 		GenericSelectQuery<Person> qp0 = new GenericSelectQuery<Person>(Person.class);
 		Person target0 = qp0.target();
 		qp0.eq(target0.getName(), "tom");
 
-		// List<Person> res0 = JPAObjectQuery.buildQuery(qp0,
-		// collection).getResultList();
-		// Assert.assertEquals(1, res0.size());
-		// Person p = res0.get(0);
-		Person p = null;
+		List<Person> res0 = MongoDBObjectQuery.execute(qp0, datastore);
+		Assert.assertEquals(1, res0.size());
+		Person p = res0.get(0);
 
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
@@ -228,7 +237,7 @@ public class TestPersistentSelect {
 		Assert.assertEquals((Double) res.get(0)[1], 1000000d, 0);
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectBetweenCondition() {
 		SelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
 		Home target = qp.target();

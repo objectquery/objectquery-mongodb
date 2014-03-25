@@ -58,9 +58,10 @@ public class MongoDBQueryBuilder {
 	}
 
 	private void buildDelete(Class<?> targetClass, GenericInternalQueryBuilder builder) {
-		query = new BasicDBObject();
 		if (!builder.getConditions().isEmpty())
-			query.put("$query", buildConditionGroup(builder));
+			query = buildConditionGroup(builder);
+		else
+			query = new BasicDBObject();
 	}
 
 	private void buildSelect(Class<?> targetClass, GenericInternalQueryBuilder builder, List<Join> joins, String name) {
@@ -77,6 +78,8 @@ public class MongoDBQueryBuilder {
 
 		if (!builder.getConditions().isEmpty())
 			query.put("$query", buildConditionGroup(builder));
+		else
+			query.put("$query", new BasicDBObject());
 		if (!builder.getOrders().isEmpty())
 			query.put("$orderby", buildOrder(builder.getOrders()));
 	}

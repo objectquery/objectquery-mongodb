@@ -28,25 +28,26 @@ public class PersistentTestHelper {
 		Home dudHome = new Home();
 		dudHome.setAddress("moon");
 		dudHome.setType(HomeType.HOUSE);
-
+		ds.save(dudHome);
 		Person tomDud = new Person();
 		tomDud.setName("tomdud");
 		tomDud.setHome(dudHome);
-
+		ds.save(tomDud);
 		Person tomMum = new Person();
 		tomMum.setName("tommum");
 		tomMum.setHome(dudHome);
-
+		ds.save(tomMum);
 		Home dogHome = new Home();
 		dogHome.setAddress("royal palace");
 		dogHome.setType(HomeType.KENNEL);
 		dogHome.setPrice(1000000);
 		dogHome.setWeight(30);
-
+		ds.save(dogHome);
 		Dog tomDog = new Dog();
 		tomDog.setName("cerberus");
 		// tomDog.setOwner(tom);
 		tomDog.setHome(dogHome);
+		ds.save(tomDog);
 
 		tom.setDud(tomDud);
 		tom.setMum(tomMum);

@@ -55,7 +55,7 @@ public class TestDeleteQuery {
 		DeleteQuery<Person> dq = new GenericeDeleteQuery<Person>(Person.class);
 		dq.eq(dq.target().getName(), "to-delete");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(dq);
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : \"to-delete\"}]}}", q.getQuery().toString());
+		Assert.assertEquals("{ \"$and\" : [ { \"name\" : \"to-delete\"}]}", q.getQuery().toString());
 	}
 
 	@After
