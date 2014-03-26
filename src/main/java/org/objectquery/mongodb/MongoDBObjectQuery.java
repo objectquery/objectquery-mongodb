@@ -70,7 +70,7 @@ public class MongoDBObjectQuery {
 
 	public static boolean execute(InsertQuery<?> ip, DBCollection engineSession) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(ip);
-		return engineSession.insert(builder.getQuery()).getN() > 0;
+		return engineSession.insert(builder.getData()).getCachedLastError().ok();
 	}
 
 	public static int execute(UpdateQuery<?> query, Datastore engineSession) {
@@ -79,7 +79,7 @@ public class MongoDBObjectQuery {
 
 	public static int execute(UpdateQuery<?> query, DBCollection engineSession) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(query);
-		return engineSession.update(builder.getData(), builder.getQuery()).getN();
+		return engineSession.update(builder.getQuery(), builder.getData()).getN();
 
 	}
 }

@@ -18,6 +18,7 @@ import org.objectquery.generic.Order;
 import org.objectquery.generic.OrderType;
 import org.objectquery.generic.PathItem;
 import org.objectquery.generic.Projection;
+import org.objectquery.generic.SetValue;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -26,6 +27,7 @@ public class MongoDBQueryBuilder {
 
 	private DBObject query;
 	private DBObject projections;
+	private DBObject data;
 
 	public MongoDBQueryBuilder(GenericBaseQuery<?> query) {
 		GenericInternalQueryBuilder builder = (GenericInternalQueryBuilder) query.getBuilder();
@@ -48,13 +50,35 @@ public class MongoDBQueryBuilder {
 	}
 
 	private void buildInsert(Class<?> targetClass, GenericInternalQueryBuilder builder) {
-		// TODO Auto-generated method stub
-
+		if (builder.getSets().isEmpty())
+			throw new ObjectQueryException("Set at least a value for the update");
+		this.data = buildValues(builder.getSets());
 	}
 
 	private void buildUpdate(Class<?> targetClass, GenericInternalQueryBuilder builder) {
-		// TODO Auto-generated method stub
+		if (!builder.getConditions().isEmpty())
+			query = buildConditionGroup(builder);
+		else
+			query = new BasicDBObject();
+		if (builder.getSets().isEmpty())
+			throw new ObjectQueryException("Set at least a value for the update");
 
+		this.data = buildValues(builder.getSets());
+
+	}
+
+	private DBObject buildValues(List<SetValue> values) {
+		DBObject obj = new BasicDBObject();
+		for (SetValue value : values) {
+			if (value.getValue() instanceof PathItem)
+				throw new ObjectQueryException("unsupported path in the value of an update");
+			if (value.getValue() instanceof SelectQuery<?>)
+				throw new ObjectQueryException("unsupported query in the value of an update");
+			PathItem item = value.getTarget();
+			getParent(item.getParent(), obj).put(item.getName(), value.getValue());
+
+		}
+		return obj;
 	}
 
 	private void buildDelete(Class<?> targetClass, GenericInternalQueryBuilder builder) {
@@ -204,8 +228,6 @@ public class MongoDBQueryBuilder {
 	}
 
 	public DBObject getData() {
-		// TODO Auto-generated method stub
-		return null;
+		return data;
 	}
-
 }

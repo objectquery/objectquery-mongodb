@@ -1,6 +1,5 @@
 package org.objectquery.mongodb;
 
-
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -16,26 +15,25 @@ import org.objectquery.mongodb.domain.Person;
 
 public class TestUpdateQuery {
 
-	private Datastore collection;
+	private Datastore datastore;
 
 	@Before
 	public void beforeTest() {
-		collection = PersistentTestHelper.getDb();
+		datastore = PersistentTestHelper.getDb();
 	}
 
 	@Test
 	public void testSimpleUpdate() {
 		Other home = new Other();
 		home.setText("old-address");
-//		collection.merge(home);
+		datastore.save(home);
 
 		UpdateQuery<Other> query = new GenericUpdateQuery<Other>(Other.class);
 		query.set(query.target().getText(), "new-address");
 		query.eq(query.target().getText(), "old-address");
 
-//		int res = JPAObjectQuery.execute(query, collection);
-//		Assert.assertEquals(1, res);
-		Assert.fail();
+		int res = MongoDBObjectQuery.execute(query, datastore);
+		Assert.assertEquals(1, res);
 	}
 
 	@Test
@@ -43,60 +41,59 @@ public class TestUpdateQuery {
 		UpdateQuery<Home> query = new GenericUpdateQuery<Home>(Home.class);
 		query.set(query.target().getAddress(), "new-address");
 		query.eq(query.target().getAddress(), "old-address");
-//		JPQLQueryGenerator q = JPAObjectQuery.jpqlGenerator(query);
-//		Assert.assertEquals("update org.objectquery.jpa.domain.Home set address = :address where address  =  :address1", q.getQuery());
-		Assert.fail();
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
+		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
+		Assert.assertEquals("{ \"address\" : \"new-address\"}", q.getData().toString());
 	}
 
-	@Test(expected = ObjectQueryException.class)
+	@Test()
 	public void testSimpleNestedUpdate() {
 		UpdateQuery<Person> query = new GenericUpdateQuery<Person>(Person.class);
 		query.set(query.target().getHome().getAddress(), "new-address");
 		query.eq(query.target().getHome().getAddress(), "old-address");
-//		JPAObjectQuery.execute(query, collection);
+		// JPAObjectQuery.execute(query, collection);
 		Assert.fail();
 	}
 
-	@Test(expected = ObjectQueryException.class)
+	@Test()
 	public void testSimpleNestedUpdateGen() {
 		UpdateQuery<Person> query = new GenericUpdateQuery<Person>(Person.class);
 		query.set(query.target().getHome().getAddress(), "new-address");
 		query.eq(query.target().getHome().getAddress(), "old-address");
-
-//		JPAObjectQuery.jpqlGenerator(query);
-		Assert.fail();
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
+		Assert.assertEquals("{ \"$and\" : [ { \"home\" : { \"address\" : \"old-address\"}}]}", q.getQuery().toString());
+		Assert.assertEquals("{ \"home\" : { \"address\" : \"new-address\"}}", q.getData().toString());
 	}
 
 	@Test
-	public void testMultipleNestedUpdate() {
+	public void testMultipleUpdate() {
 		Other home = new Other();
 		home.setText("2old-address");
-//		collection.merge(home);
+		datastore.save(home);
 
 		UpdateQuery<Other> query = new GenericUpdateQuery<Other>(Other.class);
 		query.set(query.target().getText(), "new-address");
 		query.set(query.box(query.target().getPrice()), 1d);
 		query.eq(query.target().getText(), "2old-address");
-//		int res = JPAObjectQuery.execute(query, collection);
-//		Assert.assertEquals(1, res);
-		Assert.fail();
+		int res = MongoDBObjectQuery.execute(query, datastore);
+		Assert.assertEquals(1, res);
 	}
 
 	@Test
-	public void testMultipleNestedUpdateGen() {
+	public void testMultipleUpdateGen() {
 		UpdateQuery<Home> query = new GenericUpdateQuery<Home>(Home.class);
 		query.set(query.target().getAddress(), "new-address");
 		query.set(query.box(query.target().getPrice()), 1d);
 		query.eq(query.target().getAddress(), "old-address");
 
-//		JPQLQueryGenerator q = JPAObjectQuery.jpqlGenerator(query);
-//		Assert.assertEquals("update org.objectquery.jpa.domain.Home set address = :address,price = :price where address  =  :address1", q.getQuery());
-		Assert.fail();
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
+		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
+		Assert.assertEquals("{ \"address\" : \"new-address\" , \"price\" : 1.0}", q.getData().toString());
 	}
 
 	@After
 	public void afterTest() {
-		collection = null;
+		datastore = null;
 	}
 
 }

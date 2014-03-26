@@ -1,6 +1,5 @@
 package org.objectquery.mongodb;
 
-
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -26,17 +25,15 @@ public class TestInsertQuery {
 	public void testSimpleInsert() {
 		InsertQuery<Other> ip = new GenericInsertQuery<Other>(Other.class);
 		ip.set(ip.target().getText(), "test");
-//		OrientDBObjectQuery.execute(ip, collection);
-		Assert.fail();
+		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 
 	@Test
 	public void testSimpleInsertGen() {
 		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
 		ip.set(ip.target().getName(), "test");
-//		OrientDBQueryGenerator q = OrientDBObjectQuery.orientdbGenerator(ip);
-//		Assert.assertEquals("insert into Person (name)values(:name)", q.getQuery());
-		Assert.fail();
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
+		Assert.assertEquals("{ \"name\" : \"test\"}", q.getData().toString());
 	}
 
 	@Test
@@ -44,9 +41,7 @@ public class TestInsertQuery {
 		InsertQuery<Home> ip = new GenericInsertQuery<Home>(Home.class);
 		ip.set(ip.box(ip.target().getPrice()), 4D);
 		ip.set(ip.box(ip.target().getWeight()), 6);
-//		Home res = OrientDBObjectQuery.execute(ip, collection);
-//		Assert.assertNotNull(res);
-		Assert.fail();
+		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 
 	@Test
@@ -54,29 +49,26 @@ public class TestInsertQuery {
 		InsertQuery<Home> ip = new GenericInsertQuery<Home>(Home.class);
 		ip.set(ip.box(ip.target().getPrice()), 4D);
 		ip.set(ip.box(ip.target().getWeight()), 6);
-//		OrientDBQueryGenerator q = OrientDBObjectQuery.orientdbGenerator(ip);
-//		Assert.assertEquals("insert into Home (price,weight)values(:price,:weight)", q.getQuery());
-		Assert.fail();
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
+		Assert.assertEquals("{ \"price\" : 4.0 , \"weight\" : 6}", q.getData().toString());
+
 	}
 
 	@Test
-	public void testDupicateFieldInsert() {
-		InsertQuery<Other> ip = new GenericInsertQuery<Other>(Other.class);
-		ip.set(ip.box(ip.target().getPrice()), 4D);
-		ip.set(ip.target().getText(), "aa");
-//		Other res = OrientDBObjectQuery.execute(ip, collection);
-//		Assert.assertNotNull(res);
-		Assert.fail();
+	public void testNestedInsertGen() {
+		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
+		ip.set(ip.target().getDud().getName(), "test");
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
+		Assert.assertEquals("{ \"dud\" : { \"name\" : \"test\"}}", q.getData().toString());
 	}
 
 	@Test
 	public void testNestedInsert() {
 		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
 		ip.set(ip.target().getDud().getName(), "test");
-//		OrientDBQueryGenerator q = OrientDBObjectQuery.orientdbGenerator(ip);
-//		Assert.assertEquals("insert into Person (dud.name)values(:dudname)", q.getQuery());
-		Assert.fail();
+		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
+
 	@After
 	public void afterTest() {
 		datastore = null;
