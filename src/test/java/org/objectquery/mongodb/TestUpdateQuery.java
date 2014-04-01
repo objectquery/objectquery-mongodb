@@ -61,7 +61,7 @@ public class TestUpdateQuery {
 		query.set(query.target().getHome().getAddress(), "new-address");
 		query.eq(query.target().getHome().getAddress(), "old-address");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
-		Assert.assertEquals("{ \"$and\" : [ { \"home\" : { \"address\" : \"old-address\"}}]}", q.getQuery().toString());
+		Assert.assertEquals("{ \"$and\" : [ { \"home.address\" : \"old-address\"}]}", q.getQuery().toString());
 		Assert.assertEquals("{ \"home\" : { \"address\" : \"new-address\"}}", q.getData().toString());
 	}
 

@@ -151,29 +151,26 @@ public class MongoDBQueryBuilder {
 				list.add(buildConditionGroup((ConditionGroup) element));
 			} else if (element instanceof ConditionItem) {
 				ConditionItem item = (ConditionItem) element;
-				list.add(getConditionParent(item));
+				list.add(buildSimpleCondition(item));
 			}
 		}
 		return new BasicDBObject(getGroupOperator(group.getType()), list);
 	}
 
-	private DBObject getConditionParent(ConditionItem conditionItem) {
+	private DBObject buildSimpleCondition(ConditionItem conditionItem) {
 		BasicDBObject cur = null;
 		PathItem item = conditionItem.getItem();
-		while (item.getParent() != null) {
-			if (cur == null) {
-				if (conditionItem.getValue() instanceof PathItem)
-					throw new ObjectQueryException("mongodb implemantation doesn't support fields as condition value");
-				if (conditionItem.getValue() instanceof SelectQuery<?>)
-					throw new ObjectQueryException("mongodb implemantation doesn't support subquery");
-				if (ConditionType.EQUALS == conditionItem.getType())
-					cur = new BasicDBObject(item.getName(), conditionItem.getValue());
-				else
-					cur = new BasicDBObject(item.getName(), new BasicDBObject(getOperator(conditionItem.getType()), conditionItem.getValue()));
-			} else
-				cur = new BasicDBObject(item.getName(), cur);
-			item = item.getParent();
-		}
+		StringBuilder path = new StringBuilder();
+		GenericInternalQueryBuilder.buildPath(item, path);
+		if (conditionItem.getValue() instanceof PathItem)
+			throw new ObjectQueryException("mongodb implemantation doesn't support fields as condition value");
+		if (conditionItem.getValue() instanceof SelectQuery<?>)
+			throw new ObjectQueryException("mongodb implemantation doesn't support subquery");
+		if (ConditionType.EQUALS == conditionItem.getType())
+			cur = new BasicDBObject(path.toString(), conditionItem.getValue());
+		else
+			cur = new BasicDBObject(path.toString(), new BasicDBObject(getOperator(conditionItem.getType()), conditionItem.getValue()));
+		item = item.getParent();
 		return cur;
 	}
 

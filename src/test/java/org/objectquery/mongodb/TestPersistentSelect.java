@@ -225,7 +225,7 @@ public class TestPersistentSelect {
 		Assert.assertEquals((Double) res.get(2)[1], 0d, 0);
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectGroupHaving() {
 		GenericSelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
 		Home target = qp.target();
@@ -234,9 +234,7 @@ public class TestPersistentSelect {
 		qp.order(qp.box(target.getPrice()), ProjectionType.MAX, OrderType.DESC);
 		qp.having(qp.box(target.getPrice()), ProjectionType.MAX).eq(1000000d);
 
-		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals((Double) res.get(0)[1], 1000000d, 0);
+		MongoDBObjectQuery.execute(qp, datastore);
 	}
 
 	@Test(expected = ObjectQueryException.class)

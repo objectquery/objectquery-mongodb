@@ -45,7 +45,7 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getDog().getName(), "tom");
 		qp.eq(target.getDud().getName(), "tom3");
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}} , { \"dud\" : { \"name\" : \"tom3\"}}]}}",
+		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"} , { \"dud.name\" : \"tom3\"}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 
 	}
@@ -58,7 +58,7 @@ public class TestSimpleQuery {
 		qp.prj(target.getName());
 		qp.eq(target.getDog().getName(), "tom");
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}}]}}",
+		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 		Assert.assertEquals("{ \"name\" : 1}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getProjections()));
 
@@ -87,7 +87,7 @@ public class TestSimpleQuery {
 		qp.eq(target.getDog().getName(), "tom");
 		qp.order(target.getName());
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}}]} , \"$orderby\" : { \"name\" : 1}}",
+		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
@@ -99,7 +99,7 @@ public class TestSimpleQuery {
 		qp.eq(target.getDog().getName(), "tom");
 		qp.order(target.getName(), OrderType.ASC);
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}}]} , \"$orderby\" : { \"name\" : 1}}",
+		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 
 	}
@@ -114,7 +114,7 @@ public class TestSimpleQuery {
 		qp.order(target.getDog().getName(), OrderType.DESC);
 
 		Assert.assertEquals(
-				"{ \"$query\" : { \"$and\" : [ { \"dog\" : { \"name\" : \"tom\"}}]} , \"$orderby\" : { \"name\" : -1 , \"dog\" : { \"name\" : -1}}}",
+				"{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : -1 , \"dog\" : { \"name\" : -1}}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
