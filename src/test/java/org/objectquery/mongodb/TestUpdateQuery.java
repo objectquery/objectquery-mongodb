@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.objectquery.UpdateQuery;
 import org.objectquery.generic.GenericUpdateQuery;
-import org.objectquery.generic.ObjectQueryException;
+import org.objectquery.mongodb.domain.Document;
 import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Other;
 import org.objectquery.mongodb.domain.Person;
@@ -48,11 +48,11 @@ public class TestUpdateQuery {
 
 	@Test()
 	public void testSimpleNestedUpdate() {
-		UpdateQuery<Person> query = new GenericUpdateQuery<Person>(Person.class);
-		query.set(query.target().getHome().getAddress(), "new-address");
-		query.eq(query.target().getHome().getAddress(), "old-address");
-		// JPAObjectQuery.execute(query, collection);
-		Assert.fail();
+		UpdateQuery<Document> query = new GenericUpdateQuery<Document>(Document.class);
+		query.set(query.target().getMetadata().getAuthor(), "the real Author");
+		query.eq(query.target().getMetadata().getAuthor(), "the Author");
+		int res = MongoDBObjectQuery.execute(query, datastore);
+		Assert.assertEquals(1, res);
 	}
 
 	@Test()

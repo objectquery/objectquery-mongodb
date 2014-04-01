@@ -42,7 +42,7 @@ public class MongoDBObjectQuery {
 
 	private static DBCursor executeSelect(SelectQuery<?> query, DBCollection collection) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(query);
-		DBCursor cursor = collection.find(builder.getQuery());
+		DBCursor cursor = collection.find(builder.getQuery(),builder.getProjections());
 		return cursor;
 	}
 

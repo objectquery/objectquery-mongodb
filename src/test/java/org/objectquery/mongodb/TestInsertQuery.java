@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.objectquery.InsertQuery;
 import org.objectquery.generic.GenericInsertQuery;
+import org.objectquery.mongodb.domain.Document;
 import org.objectquery.mongodb.domain.Home;
 import org.objectquery.mongodb.domain.Other;
 import org.objectquery.mongodb.domain.Person;
@@ -64,8 +65,8 @@ public class TestInsertQuery {
 
 	@Test
 	public void testNestedInsert() {
-		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
-		ip.set(ip.target().getDud().getName(), "test");
+		InsertQuery<Document> ip = new GenericInsertQuery<Document>(Document.class);
+		ip.set(ip.target().getMetadata().getAuthor(), "test");
 		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 

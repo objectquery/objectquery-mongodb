@@ -4,8 +4,10 @@ import java.net.UnknownHostException;
 
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.objectquery.mongodb.domain.Document;
 import org.objectquery.mongodb.domain.Dog;
 import org.objectquery.mongodb.domain.Home;
+import org.objectquery.mongodb.domain.Metadata;
 import org.objectquery.mongodb.domain.Home.HomeType;
 import org.objectquery.mongodb.domain.Person;
 
@@ -49,6 +51,12 @@ public class PersistentTestHelper {
 		tomDog.setHome(dogHome);
 		ds.save(tomDog);
 
+		Document document = new Document();
+		Metadata metadata = new Metadata();
+		metadata.setAuthor("the Author");
+		document.setMetadata(metadata);
+		ds.save(document);
+
 		tom.setDud(tomDud);
 		tom.setMum(tomMum);
 		tom.setDog(tomDog);
@@ -73,6 +81,7 @@ public class PersistentTestHelper {
 						ds.getCollection(Person.class).drop();
 						ds.getCollection(Home.class).drop();
 						ds.getCollection(Dog.class).drop();
+						ds.getCollection(Document.class).drop();
 						client.close();
 					}
 				});
