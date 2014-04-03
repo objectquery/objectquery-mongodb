@@ -65,14 +65,12 @@ public class TestPersistentSelect {
 		Assert.assertEquals(res.get(0).getHome().getAddress(), "homeless");
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectCountThis() {
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
 		Person target = qp.target();
 		qp.prj(target, ProjectionType.COUNT);
-		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals(3L, res.get(0));
+		MongoDBObjectQuery.execute(qp, datastore);
 	}
 
 	@Test
@@ -179,7 +177,7 @@ public class TestPersistentSelect {
 		Assert.assertEquals(0, res.size());
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectFunctionGrouping() {
 
 		SelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -188,28 +186,20 @@ public class TestPersistentSelect {
 		qp.prj(qp.box(target.getPrice()), ProjectionType.MAX);
 		qp.order(target.getAddress());
 
-		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(res.size(), 3);
-		Assert.assertEquals(res.get(0)[1], 0d);
-		Assert.assertEquals(res.get(1)[1], 0d);
-		Assert.assertEquals(res.get(2)[1], 1000000d);
+		MongoDBObjectQuery.execute(qp, datastore);
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectOrderGrouping() {
 
 		GenericSelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
 		Home target = qp.target();
 		qp.order(qp.box(target.getPrice()), ProjectionType.MAX, OrderType.ASC);
-		List<Home> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(3, res.size());
-		Assert.assertEquals(0d, res.get(0).getPrice(), 0);
-		Assert.assertEquals(0d, res.get(1).getPrice(), 0);
-		Assert.assertEquals(1000000d, res.get(2).getPrice(), 0);
+		MongoDBObjectQuery.execute(qp, datastore);
 
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testSelectOrderGroupingPrj() {
 
 		GenericSelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -218,11 +208,7 @@ public class TestPersistentSelect {
 		qp.prj(qp.box(target.getPrice()), ProjectionType.MAX);
 		qp.order(qp.box(target.getPrice()), ProjectionType.MAX, OrderType.DESC);
 
-		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(3, res.size());
-		Assert.assertEquals((Double) res.get(0)[1], 1000000d, 0);
-		Assert.assertEquals((Double) res.get(1)[1], 0d, 0);
-		Assert.assertEquals((Double) res.get(2)[1], 0d, 0);
+		MongoDBObjectQuery.execute(qp, datastore);
 	}
 
 	@Test(expected = ObjectQueryException.class)

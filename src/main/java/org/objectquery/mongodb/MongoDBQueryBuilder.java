@@ -63,7 +63,7 @@ public class MongoDBQueryBuilder {
 		if (builder.getSets().isEmpty())
 			throw new ObjectQueryException("Set at least a value for the update");
 
-		this.data = buildValues(builder.getSets());
+		this.data = new BasicDBObject("$set", buildValues(builder.getSets()));
 
 	}
 
@@ -111,6 +111,8 @@ public class MongoDBQueryBuilder {
 	private DBObject buildProjection(List<Projection> projectionsList) {
 		DBObject obj = new BasicDBObject();
 		for (Projection projection : projectionsList) {
+			if (projection.getType() != null)
+				throw new ObjectQueryException("Object Query implementation of mongodb doesn't support aggregation operators");
 			if (projection.getItem() instanceof PathItem) {
 				PathItem item = ((PathItem) projection.getItem());
 				getParent(item.getParent(), obj).put(item.getName(), new Integer(1));
@@ -123,6 +125,8 @@ public class MongoDBQueryBuilder {
 	private DBObject buildOrder(List<Order> orders) {
 		DBObject obj = new BasicDBObject();
 		for (Order order : orders) {
+			if (order.getProjectionType() != null)
+				throw new ObjectQueryException("Object Query implementation of mongodb doesn't support aggregation operators");
 			PathItem item = ((PathItem) order.getItem());
 			getParent(item.getParent(), obj).put(item.getName(), order.getType() != OrderType.DESC ? new Integer(1) : new Integer(-1));
 		}

@@ -64,7 +64,7 @@ public class TestSimpleQuery {
 
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testProjectionCountThis() {
 
 		GenericSelectQuery<Person> qp = new GenericSelectQuery<Person>(Person.class);
@@ -72,10 +72,7 @@ public class TestSimpleQuery {
 		qp.prj(target, ProjectionType.COUNT);
 		qp.eq(target.getDog().getName(), "tom");
 
-		// Assert.assertEquals("select  COUNT(A) from org.objectquery.jpa.domain.Person A where A.dog.name  =  :A_dog_name",
-		// JPAObjectQuery
-		// .jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		MongoDBObjectQuery.mongoDBBuilder(qp);
 
 	}
 
@@ -118,7 +115,7 @@ public class TestSimpleQuery {
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testOrderGrouping() {
 
 		GenericSelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -126,12 +123,10 @@ public class TestSimpleQuery {
 		qp.eq(target.getAddress(), "homeless");
 		qp.order(qp.box(target.getPrice()), ProjectionType.COUNT, OrderType.ASC);
 
-		// Assert.assertEquals("select A from org.objectquery.jpa.domain.Home A where A.address  =  :A_address group by A  order by  COUNT(A.price) ASC",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		MongoDBObjectQuery.mongoDBBuilder(qp);
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testOrderGroupingPrj() {
 
 		GenericSelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -139,11 +134,7 @@ public class TestSimpleQuery {
 		qp.prj(target.getAddress());
 		qp.prj(qp.box(target.getPrice()), ProjectionType.COUNT);
 		qp.order(qp.box(target.getPrice()), ProjectionType.COUNT, OrderType.ASC);
-
-		// Assert.assertEquals(
-		// "select A.address, COUNT(A.price) from org.objectquery.jpa.domain.Home A group by A.address order by  COUNT(A.price) ASC",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		MongoDBObjectQuery.mongoDBBuilder(qp);
 	}
 
 	@Test
@@ -200,7 +191,7 @@ public class TestSimpleQuery {
 		JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery());
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testProjectionGroup() {
 
 		SelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -209,13 +200,11 @@ public class TestSimpleQuery {
 		qp.prj(qp.box(target.getPrice()), ProjectionType.MAX);
 		qp.order(target.getAddress());
 
-		// Assert.assertEquals("select A.address, MAX(A.price) from org.objectquery.jpa.domain.Home A group by A.address order by A.address",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		MongoDBObjectQuery.mongoDBBuilder(qp);
 
 	}
 
-	@Test
+	@Test(expected = ObjectQueryException.class)
 	public void testProjectionGroupHaving() {
 
 		SelectQuery<Home> qp = new GenericSelectQuery<Home>(Home.class);
@@ -225,9 +214,7 @@ public class TestSimpleQuery {
 		qp.order(target.getAddress());
 		qp.having(qp.box(target.getPrice()), ProjectionType.MAX).eq(0D);
 
-		// Assert.assertEquals("select A.address, MAX(A.price) from org.objectquery.jpa.domain.Home A group by A.address having MAX(A.price) = :A_price order by A.address",
-		// JPAObjectQuery.jpqlGenerator(qp).getQuery());
-		Assert.fail();
+		MongoDBObjectQuery.mongoDBBuilder(qp);
 
 	}
 

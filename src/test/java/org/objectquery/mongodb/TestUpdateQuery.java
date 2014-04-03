@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
+import org.objectquery.QueryCondition;
 import org.objectquery.UpdateQuery;
 import org.objectquery.generic.GenericUpdateQuery;
 import org.objectquery.mongodb.domain.Document;
@@ -43,7 +44,7 @@ public class TestUpdateQuery {
 		query.eq(query.target().getAddress(), "old-address");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
 		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"address\" : \"new-address\"}", q.getData().toString());
+		Assert.assertEquals("{ \"$set\" : { \"address\" : \"new-address\"}}", q.getData().toString());
 	}
 
 	@Test()
@@ -62,7 +63,30 @@ public class TestUpdateQuery {
 		query.eq(query.target().getHome().getAddress(), "old-address");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
 		Assert.assertEquals("{ \"$and\" : [ { \"home.address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"home\" : { \"address\" : \"new-address\"}}", q.getData().toString());
+		Assert.assertEquals("{ \"$set\" : { \"home\" : { \"address\" : \"new-address\"}}}", q.getData().toString());
+	}
+
+	@Test
+	public void testMultirecodUpdateGen() {
+		UpdateQuery<Document> query = new GenericUpdateQuery<Document>(Document.class);
+		query.set(query.target().getTitle(), "a title");
+		QueryCondition or = query.or();
+		or.eq(query.target().getTitle(), "first update");
+		or.eq(query.target().getTitle(), "second update");
+		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
+		Assert.assertEquals("{ \"$and\" : [ { \"$or\" : [ { \"title\" : \"first update\"} , { \"title\" : \"second update\"}]}]}", q.getQuery().toString());
+		Assert.assertEquals("{ \"$set\" : { \"title\" : \"a title\"}}", q.getData().toString());
+	}
+
+	@Test
+	public void testMultirecodUpdate() {
+		UpdateQuery<Document> query = new GenericUpdateQuery<Document>(Document.class);
+		query.set(query.target().getTitle(), "a title");
+		QueryCondition or = query.or();
+		or.eq(query.target().getTitle(), "first update");
+		or.eq(query.target().getTitle(), "second update");
+		int res = MongoDBObjectQuery.execute(query, datastore);
+		Assert.assertEquals(2, res);
 	}
 
 	@Test
@@ -88,7 +112,7 @@ public class TestUpdateQuery {
 
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
 		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"address\" : \"new-address\" , \"price\" : 1.0}", q.getData().toString());
+		Assert.assertEquals("{ \"$set\" : { \"address\" : \"new-address\" , \"price\" : 1.0}}", q.getData().toString());
 	}
 
 	@After

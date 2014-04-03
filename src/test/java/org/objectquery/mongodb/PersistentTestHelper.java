@@ -57,6 +57,14 @@ public class PersistentTestHelper {
 		document.setMetadata(metadata);
 		ds.save(document);
 
+		document = new Document();
+		document.setTitle("first update");
+		ds.save(document);
+
+		document = new Document();
+		document.setTitle("second update");
+		ds.save(document);
+
 		tom.setDud(tomDud);
 		tom.setMum(tomMum);
 		tom.setDog(tomDog);

@@ -42,7 +42,7 @@ public class MongoDBObjectQuery {
 
 	private static DBCursor executeSelect(SelectQuery<?> query, DBCollection collection) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(query);
-		DBCursor cursor = collection.find(builder.getQuery(),builder.getProjections());
+		DBCursor cursor = collection.find(builder.getQuery(), builder.getProjections());
 		return cursor;
 	}
 
@@ -79,7 +79,7 @@ public class MongoDBObjectQuery {
 
 	public static int execute(UpdateQuery<?> query, DBCollection engineSession) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(query);
-		return engineSession.update(builder.getQuery(), builder.getData()).getN();
+		return engineSession.updateMulti(builder.getQuery(), builder.getData()).getN();
 
 	}
 }
