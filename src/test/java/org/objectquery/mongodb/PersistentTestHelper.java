@@ -7,8 +7,8 @@ import org.mongodb.morphia.Morphia;
 import org.objectquery.mongodb.domain.Document;
 import org.objectquery.mongodb.domain.Dog;
 import org.objectquery.mongodb.domain.Home;
-import org.objectquery.mongodb.domain.Metadata;
 import org.objectquery.mongodb.domain.Home.HomeType;
+import org.objectquery.mongodb.domain.Metadata;
 import org.objectquery.mongodb.domain.Person;
 
 import com.mongodb.MongoClient;

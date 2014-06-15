@@ -1,6 +1,7 @@
 package org.objectquery.mongodb;
 
 import org.junit.Test;
+import org.objectquery.BaseSelectQuery;
 import org.objectquery.SelectQuery;
 import org.objectquery.generic.GenericSelectQuery;
 import org.objectquery.generic.ObjectQueryException;
@@ -16,9 +17,9 @@ public class TestSubQuery {
 
 	@Test(expected = ObjectQueryException.class)
 	public void testSubquerySimple() {
-		SelectQuery<Person> query = new GenericSelectQuery<Person>(Person.class);
+		SelectQuery<Person> query = new GenericSelectQuery<Person,Object>(Person.class);
 
-		SelectQuery<Person> subQuery = query.subQuery(Person.class);
+		BaseSelectQuery<Person> subQuery = query.subQuery(Person.class);
 		subQuery.eq(subQuery.target().getName(), "test");
 		query.eq(query.target().getDud(), subQuery);
 

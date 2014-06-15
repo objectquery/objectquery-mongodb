@@ -3,7 +3,7 @@ package org.objectquery.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectquery.SelectQuery;
+import org.objectquery.BaseSelectQuery;
 import org.objectquery.generic.ConditionElement;
 import org.objectquery.generic.ConditionGroup;
 import org.objectquery.generic.ConditionItem;
@@ -33,7 +33,7 @@ public class MongoDBQueryBuilder {
 		GenericInternalQueryBuilder builder = (GenericInternalQueryBuilder) query.getBuilder();
 		switch (builder.getQueryType()) {
 		case SELECT:
-			buildSelect(query.getTargetClass(), builder, ((GenericSelectQuery<?>) query).getJoins(), query.getRootPathItem().getName());
+			buildSelect(query.getTargetClass(), builder, ((GenericSelectQuery<?,?>) query).getJoins(), query.getRootPathItem().getName());
 			break;
 		case DELETE:
 			buildDelete(query.getTargetClass(), builder);
@@ -72,7 +72,7 @@ public class MongoDBQueryBuilder {
 		for (SetValue value : values) {
 			if (value.getValue() instanceof PathItem)
 				throw new ObjectQueryException("unsupported path in the value of an update");
-			if (value.getValue() instanceof SelectQuery<?>)
+			if (value.getValue() instanceof BaseSelectQuery<?>)
 				throw new ObjectQueryException("unsupported query in the value of an update");
 			PathItem item = value.getTarget();
 			getParent(item.getParent(), obj).put(item.getName(), value.getValue());
@@ -168,7 +168,7 @@ public class MongoDBQueryBuilder {
 		GenericInternalQueryBuilder.buildPath(item, path);
 		if (conditionItem.getValue() instanceof PathItem)
 			throw new ObjectQueryException("mongodb implemantation doesn't support fields as condition value");
-		if (conditionItem.getValue() instanceof SelectQuery<?>)
+		if (conditionItem.getValue() instanceof BaseSelectQuery<?>)
 			throw new ObjectQueryException("mongodb implemantation doesn't support subquery");
 		if (ConditionType.EQUALS == conditionItem.getType())
 			cur = new BasicDBObject(path.toString(), conditionItem.getValue());
