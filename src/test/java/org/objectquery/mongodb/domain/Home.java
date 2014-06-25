@@ -2,7 +2,6 @@ package org.objectquery.mongodb.domain;
 
 import org.mongodb.morphia.annotations.Id;
 
-
 public class Home {
 	public enum HomeType {
 		KENNEL, HOUSE

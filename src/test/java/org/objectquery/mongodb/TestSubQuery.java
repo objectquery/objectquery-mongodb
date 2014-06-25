@@ -17,7 +17,7 @@ public class TestSubQuery {
 
 	@Test(expected = ObjectQueryException.class)
 	public void testSubquerySimple() {
-		SelectQuery<Person> query = new GenericSelectQuery<Person,Object>(Person.class);
+		SelectQuery<Person> query = new GenericSelectQuery<Person, Object>(Person.class);
 
 		BaseSelectQuery<Person> subQuery = query.subQuery(Person.class);
 		subQuery.eq(subQuery.target().getName(), "test");

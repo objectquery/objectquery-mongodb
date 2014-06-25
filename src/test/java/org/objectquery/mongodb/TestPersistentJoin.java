@@ -20,7 +20,7 @@ public class TestPersistentJoin {
 
 	@Test(expected = ObjectQueryException.class)
 	public void testSimpleJoin() {
-		SelectQuery<Person> query = new GenericSelectQuery<Person,Object>(Person.class);
+		SelectQuery<Person> query = new GenericSelectQuery<Person, Object>(Person.class);
 		Person joined = query.join(Person.class);
 		query.eq(query.target().getMom(), joined);
 

@@ -10,7 +10,7 @@ import org.mongodb.morphia.mapping.cache.EntityCache;
 import org.objectquery.BaseQuery;
 import org.objectquery.DeleteQuery;
 import org.objectquery.InsertQuery;
-import org.objectquery.BaseSelectQuery;
+import org.objectquery.SelectQuery;
 import org.objectquery.UpdateQuery;
 import org.objectquery.generic.GenericBaseQuery;
 import org.objectquery.generic.ObjectQueryException;
@@ -28,7 +28,7 @@ public class MongoDBObjectQuery {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <RET extends List<?>> RET execute(BaseSelectQuery<?> query, Datastore engineSession) {
+	public static <RET extends List<?>> RET execute(SelectQuery<?> query, Datastore engineSession) {
 		DBCollection collection = getCollection(query, engineSession);
 		DBCursor cursor = executeSelect(query, collection);
 		Mapper mapper = ((DatastoreImpl) engineSession).getMapper();
@@ -40,7 +40,7 @@ public class MongoDBObjectQuery {
 		return (RET) res;
 	}
 
-	private static DBCursor executeSelect(BaseSelectQuery<?> query, DBCollection collection) {
+	private static DBCursor executeSelect(SelectQuery<?> query, DBCollection collection) {
 		MongoDBQueryBuilder builder = mongoDBBuilder(query);
 		DBCursor cursor = collection.find(builder.getQuery(), builder.getProjections());
 		return cursor;
@@ -51,7 +51,7 @@ public class MongoDBObjectQuery {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <RET extends List<?>> RET execute(BaseSelectQuery<?> query, DBCollection engineSession) {
+	public static <RET extends List<?>> RET execute(SelectQuery<?> query, DBCollection engineSession) {
 		return (RET) executeSelect(query, engineSession).toArray();
 	}
 

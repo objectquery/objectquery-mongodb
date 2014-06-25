@@ -1,7 +1,9 @@
 package org.objectquery.mongodb;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
@@ -26,7 +28,7 @@ public class TestDeleteQuery {
 		collection.save(ot);
 		DeleteQuery<Other> dq = new GenericeDeleteQuery<Other>(Other.class);
 		int deleted = MongoDBObjectQuery.execute(dq, collection);
-		Assert.assertTrue(deleted != 0);
+		assertTrue(deleted != 0);
 
 	}
 
@@ -34,7 +36,7 @@ public class TestDeleteQuery {
 	public void testSimpleDeleteGen() {
 		DeleteQuery<Person> dq = new GenericeDeleteQuery<Person>(Person.class);
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(dq);
-		Assert.assertEquals("{ }", q.getQuery().toString());
+		assertEquals("{ }", q.getQuery().toString());
 	}
 
 	@Test
@@ -46,7 +48,7 @@ public class TestDeleteQuery {
 		DeleteQuery<Person> dq = new GenericeDeleteQuery<Person>(Person.class);
 		dq.eq(dq.target().getName(), "to-delete");
 		int deleted = MongoDBObjectQuery.execute(dq, collection);
-		Assert.assertTrue(deleted != 0);
+		assertTrue(deleted != 0);
 	}
 
 	@Test
@@ -55,7 +57,7 @@ public class TestDeleteQuery {
 		DeleteQuery<Person> dq = new GenericeDeleteQuery<Person>(Person.class);
 		dq.eq(dq.target().getName(), "to-delete");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(dq);
-		Assert.assertEquals("{ \"$and\" : [ { \"name\" : \"to-delete\"}]}", q.getQuery().toString());
+		assertEquals("{ \"$and\" : [ { \"name\" : \"to-delete\"}]}", q.getQuery().toString());
 	}
 
 	@After

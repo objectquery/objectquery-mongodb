@@ -33,7 +33,7 @@ public class MongoDBQueryBuilder {
 		GenericInternalQueryBuilder builder = (GenericInternalQueryBuilder) query.getBuilder();
 		switch (builder.getQueryType()) {
 		case SELECT:
-			buildSelect(query.getTargetClass(), builder, ((GenericSelectQuery<?,?>) query).getJoins(), query.getRootPathItem().getName());
+			buildSelect(query.getTargetClass(), builder, ((GenericSelectQuery<?, ?>) query).getJoins(), query.getRootPathItem().getName());
 			break;
 		case DELETE:
 			buildDelete(query.getTargetClass(), builder);

@@ -1,6 +1,6 @@
 package org.objectquery.mongodb;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +34,7 @@ public class TestUpdateQuery {
 		query.eq(query.target().getText(), "old-address");
 
 		int res = MongoDBObjectQuery.execute(query, datastore);
-		Assert.assertEquals(1, res);
+		assertEquals(1, res);
 	}
 
 	@Test
@@ -43,8 +43,8 @@ public class TestUpdateQuery {
 		query.set(query.target().getAddress(), "new-address");
 		query.eq(query.target().getAddress(), "old-address");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
-		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"$set\" : { \"address\" : \"new-address\"}}", q.getData().toString());
+		assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
+		assertEquals("{ \"$set\" : { \"address\" : \"new-address\"}}", q.getData().toString());
 	}
 
 	@Test()
@@ -53,7 +53,7 @@ public class TestUpdateQuery {
 		query.set(query.target().getMetadata().getAuthor(), "the real Author");
 		query.eq(query.target().getMetadata().getAuthor(), "the Author");
 		int res = MongoDBObjectQuery.execute(query, datastore);
-		Assert.assertEquals(1, res);
+		assertEquals(1, res);
 	}
 
 	@Test()
@@ -62,8 +62,8 @@ public class TestUpdateQuery {
 		query.set(query.target().getHome().getAddress(), "new-address");
 		query.eq(query.target().getHome().getAddress(), "old-address");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
-		Assert.assertEquals("{ \"$and\" : [ { \"home.address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"$set\" : { \"home\" : { \"address\" : \"new-address\"}}}", q.getData().toString());
+		assertEquals("{ \"$and\" : [ { \"home.address\" : \"old-address\"}]}", q.getQuery().toString());
+		assertEquals("{ \"$set\" : { \"home\" : { \"address\" : \"new-address\"}}}", q.getData().toString());
 	}
 
 	@Test
@@ -74,8 +74,8 @@ public class TestUpdateQuery {
 		or.eq(query.target().getTitle(), "first update");
 		or.eq(query.target().getTitle(), "second update");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
-		Assert.assertEquals("{ \"$and\" : [ { \"$or\" : [ { \"title\" : \"first update\"} , { \"title\" : \"second update\"}]}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"$set\" : { \"title\" : \"a title\"}}", q.getData().toString());
+		assertEquals("{ \"$and\" : [ { \"$or\" : [ { \"title\" : \"first update\"} , { \"title\" : \"second update\"}]}]}", q.getQuery().toString());
+		assertEquals("{ \"$set\" : { \"title\" : \"a title\"}}", q.getData().toString());
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class TestUpdateQuery {
 		or.eq(query.target().getTitle(), "first update");
 		or.eq(query.target().getTitle(), "second update");
 		int res = MongoDBObjectQuery.execute(query, datastore);
-		Assert.assertEquals(2, res);
+		assertEquals(2, res);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class TestUpdateQuery {
 		query.set(query.box(query.target().getPrice()), 1d);
 		query.eq(query.target().getText(), "2old-address");
 		int res = MongoDBObjectQuery.execute(query, datastore);
-		Assert.assertEquals(1, res);
+		assertEquals(1, res);
 	}
 
 	@Test
@@ -111,8 +111,8 @@ public class TestUpdateQuery {
 		query.eq(query.target().getAddress(), "old-address");
 
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(query);
-		Assert.assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
-		Assert.assertEquals("{ \"$set\" : { \"address\" : \"new-address\" , \"price\" : 1.0}}", q.getData().toString());
+		assertEquals("{ \"$and\" : [ { \"address\" : \"old-address\"}]}", q.getQuery().toString());
+		assertEquals("{ \"$set\" : { \"address\" : \"new-address\" , \"price\" : 1.0}}", q.getData().toString());
 	}
 
 	@After

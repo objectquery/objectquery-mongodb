@@ -1,6 +1,7 @@
 package org.objectquery.mongodb;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +27,7 @@ public class TestInsertQuery {
 	public void testSimpleInsert() {
 		InsertQuery<Other> ip = new GenericInsertQuery<Other>(Other.class);
 		ip.set(ip.target().getText(), "test");
-		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
+		assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 
 	@Test
@@ -34,7 +35,7 @@ public class TestInsertQuery {
 		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
 		ip.set(ip.target().getName(), "test");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
-		Assert.assertEquals("{ \"name\" : \"test\"}", q.getData().toString());
+		assertEquals("{ \"name\" : \"test\"}", q.getData().toString());
 	}
 
 	@Test
@@ -42,7 +43,7 @@ public class TestInsertQuery {
 		InsertQuery<Home> ip = new GenericInsertQuery<Home>(Home.class);
 		ip.set(ip.box(ip.target().getPrice()), 4D);
 		ip.set(ip.box(ip.target().getWeight()), 6);
-		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
+		assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 
 	@Test
@@ -51,7 +52,7 @@ public class TestInsertQuery {
 		ip.set(ip.box(ip.target().getPrice()), 4D);
 		ip.set(ip.box(ip.target().getWeight()), 6);
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
-		Assert.assertEquals("{ \"price\" : 4.0 , \"weight\" : 6}", q.getData().toString());
+		assertEquals("{ \"price\" : 4.0 , \"weight\" : 6}", q.getData().toString());
 
 	}
 
@@ -60,14 +61,14 @@ public class TestInsertQuery {
 		InsertQuery<Person> ip = new GenericInsertQuery<Person>(Person.class);
 		ip.set(ip.target().getDud().getName(), "test");
 		MongoDBQueryBuilder q = MongoDBObjectQuery.mongoDBBuilder(ip);
-		Assert.assertEquals("{ \"dud\" : { \"name\" : \"test\"}}", q.getData().toString());
+		assertEquals("{ \"dud\" : { \"name\" : \"test\"}}", q.getData().toString());
 	}
 
 	@Test
 	public void testNestedInsert() {
 		InsertQuery<Document> ip = new GenericInsertQuery<Document>(Document.class);
 		ip.set(ip.target().getMetadata().getAuthor(), "test");
-		Assert.assertTrue(MongoDBObjectQuery.execute(ip, datastore));
+		assertTrue(MongoDBObjectQuery.execute(ip, datastore));
 	}
 
 	@After

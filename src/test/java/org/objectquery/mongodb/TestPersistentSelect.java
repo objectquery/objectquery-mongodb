@@ -1,10 +1,11 @@
 package org.objectquery.mongodb;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
@@ -34,15 +35,15 @@ public class TestPersistentSelect {
 
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
 
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals(res.get(0).getName(), "tom");
+		assertEquals(1, res.size());
+		assertEquals(res.get(0).getName(), "tom");
 	}
 
 	@Test
 	public void testSimpleSelectWithutCond() {
 		GenericSelectQuery<Person, Object> qp = new GenericSelectQuery<Person, Object>(Person.class);
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(3, res.size());
+		assertEquals(3, res.size());
 	}
 
 	@Test(expected = ObjectQueryException.class)
@@ -51,8 +52,8 @@ public class TestPersistentSelect {
 		Person target = qp.target();
 		qp.eq(target.getDud().getHome(), target.getMom().getHome());
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals(res.get(0).getDud().getHome(), res.get(0).getMom().getHome());
+		assertEquals(1, res.size());
+		assertEquals(res.get(0).getDud().getHome(), res.get(0).getMom().getHome());
 	}
 
 	@Test
@@ -61,8 +62,8 @@ public class TestPersistentSelect {
 		Person target = qp.target();
 		qp.eq(target.getHome().getAddress(), "homeless");
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals(res.get(0).getHome().getAddress(), "homeless");
+		assertEquals(1, res.size());
+		assertEquals(res.get(0).getHome().getAddress(), "homeless");
 	}
 
 	@Test(expected = ObjectQueryException.class)
@@ -81,9 +82,9 @@ public class TestPersistentSelect {
 		qp.prj(target.getHome());
 		qp.eq(target.getName(), "tom");
 		List<DBObject> res = MongoDBObjectQuery.execute(qp, datastore.getCollection(Person.class));
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals("tom", res.get(0).get("name"));
-		Assert.assertEquals("homeless", ((DBObject) res.get(0).get("home")).get("address"));
+		assertEquals(1, res.size());
+		assertEquals("tom", res.get(0).get("name"));
+		assertEquals("homeless", ((DBObject) res.get(0).get("home")).get("address"));
 	}
 
 	@Test
@@ -93,10 +94,10 @@ public class TestPersistentSelect {
 		qp.prj(target.getName());
 		qp.order(target.getName());
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(3, res.size());
-		Assert.assertEquals("tom", res.get(0).getName());
-		Assert.assertEquals("tomdud", res.get(1).getName());
-		Assert.assertEquals("tommum", res.get(2).getName());
+		assertEquals(3, res.size());
+		assertEquals("tom", res.get(0).getName());
+		assertEquals("tomdud", res.get(1).getName());
+		assertEquals("tommum", res.get(2).getName());
 	}
 
 	@Test
@@ -106,10 +107,10 @@ public class TestPersistentSelect {
 		qp.prj(target.getName());
 		qp.order(target.getName(), OrderType.DESC);
 		List<Person> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(3, res.size());
-		Assert.assertEquals("tommum", res.get(0).getName());
-		Assert.assertEquals("tomdud", res.get(1).getName());
-		Assert.assertEquals("tom", res.get(2).getName());
+		assertEquals(3, res.size());
+		assertEquals("tommum", res.get(0).getName());
+		assertEquals("tomdud", res.get(1).getName());
+		assertEquals("tom", res.get(2).getName());
 	}
 
 	@Test
@@ -124,7 +125,7 @@ public class TestPersistentSelect {
 		qp.ltEq(target.getName(), "tom");
 		qp.notEq(target.getName(), "tom");
 		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(0, res.size());
+		assertEquals(0, res.size());
 
 	}
 
@@ -138,7 +139,7 @@ public class TestPersistentSelect {
 		qp.likeNc(target.getName(), "tom");
 		qp.notLikeNc(target.getName(), "tom");
 		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(0, res.size());
+		assertEquals(0, res.size());
 
 	}
 
@@ -154,7 +155,7 @@ public class TestPersistentSelect {
 		qp.notIn(target.getName(), pars);
 
 		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(0, res.size());
+		assertEquals(0, res.size());
 	}
 
 	@Test(expected = ObjectQueryException.class)
@@ -165,7 +166,7 @@ public class TestPersistentSelect {
 		qp0.eq(target0.getName(), "tom");
 
 		List<Person> res0 = MongoDBObjectQuery.execute(qp0, datastore);
-		Assert.assertEquals(1, res0.size());
+		assertEquals(1, res0.size());
 		Person p = res0.get(0);
 
 		GenericSelectQuery<Person, Object> qp = new GenericSelectQuery<Person, Object>(Person.class);
@@ -174,7 +175,7 @@ public class TestPersistentSelect {
 		qp.notContains(target.getFriends(), p);
 
 		List<Object[]> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(0, res.size());
+		assertEquals(0, res.size());
 	}
 
 	@Test(expected = ObjectQueryException.class)
@@ -230,8 +231,8 @@ public class TestPersistentSelect {
 		qp.between(qp.box(target.getPrice()), 100000D, 2000000D);
 
 		List<Home> res = MongoDBObjectQuery.execute(qp, datastore);
-		Assert.assertEquals(1, res.size());
-		Assert.assertEquals(res.get(0).getPrice(), 1000000d, 0);
+		assertEquals(1, res.size());
+		assertEquals(res.get(0).getPrice(), 1000000d, 0);
 	}
 
 	@After

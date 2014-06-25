@@ -2,13 +2,12 @@ package org.objectquery.mongodb.domain;
 
 import org.mongodb.morphia.annotations.Id;
 
-
 public class Dog {
 
 	@Id
 	private String id;
 	private String name;
-//	private Person owner;
+	// private Person owner;
 	private Home home;
 
 	public String getId() {
@@ -27,13 +26,13 @@ public class Dog {
 		this.name = name;
 	}
 
-//	public Person getOwner() {
-//		return owner;
-//	}
-//
-//	public void setOwner(Person owner) {
-//		this.owner = owner;
-//	}
+	// public Person getOwner() {
+	// return owner;
+	// }
+	//
+	// public void setOwner(Person owner) {
+	// this.owner = owner;
+	// }
 
 	public Home getHome() {
 		return home;

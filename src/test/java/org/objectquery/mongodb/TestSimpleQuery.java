@@ -1,9 +1,10 @@
 package org.objectquery.mongodb;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.objectquery.SelectQuery;
 import org.objectquery.generic.GenericSelectQuery;
@@ -24,7 +25,7 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : \"tom\"}]}}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : \"tom\"}]}}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
 	@Test
@@ -34,7 +35,7 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getName(), "tom");
 		qp.eq(target.getName(), "tom2");
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : \"tom\"} , { \"name\" : \"tom2\"}]}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : \"tom\"} , { \"name\" : \"tom2\"}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
@@ -45,7 +46,7 @@ public class TestSimpleQuery {
 		Person target = qp.target();
 		qp.eq(target.getDog().getName(), "tom");
 		qp.eq(target.getDud().getName(), "tom3");
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"} , { \"dud.name\" : \"tom3\"}]}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"} , { \"dud.name\" : \"tom3\"}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 
 	}
@@ -58,8 +59,8 @@ public class TestSimpleQuery {
 		qp.prj(target.getName());
 		qp.eq(target.getDog().getName(), "tom");
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]}}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
-		Assert.assertEquals("{ \"name\" : 1}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getProjections()));
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]}}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
+		assertEquals("{ \"name\" : 1}", JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getProjections()));
 
 	}
 
@@ -83,7 +84,7 @@ public class TestSimpleQuery {
 		qp.eq(target.getDog().getName(), "tom");
 		qp.order(target.getName());
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
@@ -95,7 +96,7 @@ public class TestSimpleQuery {
 		qp.eq(target.getDog().getName(), "tom");
 		qp.order(target.getName(), OrderType.ASC);
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : 1}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 
 	}
@@ -109,7 +110,7 @@ public class TestSimpleQuery {
 		qp.order(target.getName(), OrderType.DESC);
 		qp.order(target.getDog().getName(), OrderType.DESC);
 
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : -1 , \"dog\" : { \"name\" : -1}}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"dog.name\" : \"tom\"}]} , \"$orderby\" : { \"name\" : -1 , \"dog\" : { \"name\" : -1}}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
@@ -147,7 +148,7 @@ public class TestSimpleQuery {
 		qp.ltEq(target.getName(), "tom");
 		qp.notEq(target.getName(), "tom");
 
-		Assert.assertEquals(
+		assertEquals(
 				"{ \"$query\" : { \"$and\" : [ { \"name\" : \"tom\"} , { \"name\" : { \"$gt\" : \"tom\"}} , { \"name\" : { \"$lt\" : \"tom\"}} , { \"name\" : { \"$gte\" : \"tom\"}}"
 						+ " , { \"name\" : { \"$lte\" : \"tom\"}} , { \"name\" : { \"$ne\" : \"tom\"}}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
@@ -173,7 +174,7 @@ public class TestSimpleQuery {
 		pars.add("tom");
 		qp.in(target.getName(), pars);
 		qp.notIn(target.getName(), pars);
-		Assert.assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : { \"$in\" : [ \"tom\"]}} , { \"name\" : { \"$nin\" : [ \"tom\"]}}]}}",
+		assertEquals("{ \"$query\" : { \"$and\" : [ { \"name\" : { \"$in\" : [ \"tom\"]}} , { \"name\" : { \"$nin\" : [ \"tom\"]}}]}}",
 				JSON.serialize(MongoDBObjectQuery.mongoDBBuilder(qp).getQuery()));
 	}
 
