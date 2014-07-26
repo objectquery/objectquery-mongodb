@@ -13,7 +13,7 @@ import org.objectquery.UpdateQuery;
 public class MorphiaQueryEngine extends QueryEngine<Datastore> {
 
 	@Override
-	public <RET extends List<?>> RET execute(SelectQuery<?> query, Datastore engineSession) {
+	public List<?> execute(SelectQuery<?> query, Datastore engineSession) {
 		return MongoDBObjectQuery.execute(query, engineSession);
 	}
 
@@ -33,7 +33,7 @@ public class MorphiaQueryEngine extends QueryEngine<Datastore> {
 	}
 
 	@Override
-	public <RET extends List<M>, M> RET execute(SelectMapQuery<?, M> query, Datastore engineSession) {
+	public <M> List<M> execute(SelectMapQuery<?, M> query, Datastore engineSession) {
 		// TODO Auto-generated method stub
 		return null;
 	}

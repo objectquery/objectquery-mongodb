@@ -14,7 +14,7 @@ import com.mongodb.DBCollection;
 public class MongoDBQueryEngine extends QueryEngine<DBCollection> {
 
 	@Override
-	public <RET extends List<?>> RET execute(SelectQuery<?> query, DBCollection engineSession) {
+	public List<?> execute(SelectQuery<?> query, DBCollection engineSession) {
 		return MongoDBObjectQuery.execute(query, engineSession);
 	}
 
@@ -34,7 +34,7 @@ public class MongoDBQueryEngine extends QueryEngine<DBCollection> {
 	}
 
 	@Override
-	public <RET extends List<M>, M> RET execute(SelectMapQuery<?, M> query, DBCollection engineSession) {
+	public <M> List<M> execute(SelectMapQuery<?, M> query, DBCollection engineSession) {
 		// TODO Auto-generated method stub
 		return null;
 	}
