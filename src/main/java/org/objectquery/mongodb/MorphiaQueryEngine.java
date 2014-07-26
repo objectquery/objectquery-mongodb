@@ -9,6 +9,7 @@ import org.objectquery.QueryEngine;
 import org.objectquery.SelectMapQuery;
 import org.objectquery.SelectQuery;
 import org.objectquery.UpdateQuery;
+import org.objectquery.generic.ObjectQueryException;
 
 public class MorphiaQueryEngine extends QueryEngine<Datastore> {
 
@@ -34,8 +35,7 @@ public class MorphiaQueryEngine extends QueryEngine<Datastore> {
 
 	@Override
 	public <M> List<M> execute(SelectMapQuery<?, M> query, Datastore engineSession) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new ObjectQueryException("the Mongdb implementation doesn't support mapped query");
 	}
 
 }

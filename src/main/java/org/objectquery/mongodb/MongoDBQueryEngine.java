@@ -8,6 +8,7 @@ import org.objectquery.QueryEngine;
 import org.objectquery.SelectMapQuery;
 import org.objectquery.SelectQuery;
 import org.objectquery.UpdateQuery;
+import org.objectquery.generic.ObjectQueryException;
 
 import com.mongodb.DBCollection;
 
@@ -35,7 +36,6 @@ public class MongoDBQueryEngine extends QueryEngine<DBCollection> {
 
 	@Override
 	public <M> List<M> execute(SelectMapQuery<?, M> query, DBCollection engineSession) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new ObjectQueryException("the Mongdb implementation doesn't support mapped query");
 	}
 }
